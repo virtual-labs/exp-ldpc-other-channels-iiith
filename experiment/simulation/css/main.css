@@ -1,1 +1,236 @@
-/* You CSS goes in here */
+.window {
+    z-index: 20;
+}
+
+.jtk-connector {
+    z-index: 4;
+}
+
+.jtk-endpoint {
+    z-index: 5;
+}
+
+.jtk-overlay {
+    z-index: 6;
+}
+
+/* disabling text selection */
+body {
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+img {
+    -drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+text {
+    pointer-events: none;
+}
+
+h1 {
+    margin-left: auto;
+    margin-right: auto;
+
+    font-size: 2em;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+
+.container {
+    margin-top: 1%;
+}
+
+.column {
+    text-align: center;
+}
+
+.components-list {
+    padding: 2% 5%;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: start;
+    justify-content: center;
+    padding: 10px;
+    font-weight: 500;
+}
+
+
+.v-instruction-container {
+    border: .2rem solid #97d23d;
+    justify-content: flex-start;
+}
+
+.v-datalist-title {
+    padding-top: 1%;
+}
+
+
+#observations {
+    font-size: 1.25em;
+}
+
+.box-question {
+    border: solid black;
+    border-radius: 0.5em;
+    padding: 1%;
+}
+
+.bit {
+    height: 2.5em;
+    width: 2.5em;
+    border: solid black;
+    border-radius: 0.5em;
+    background-color: rgb(40, 142, 200);
+    font-size: 1em;
+    text-align: center;
+    color: rgb(2, 2, 74);
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Error Detection */
+
+select {
+    width: auto;
+    padding: 0.5em 1em;
+    border: groove;
+    border-radius: 0.2em;
+    background-color: #f1f1f1;
+} */
+
+#tannerSizeDiv svg {
+    width: 80%;
+    height: 500px; 
+    max-width: 100%;
+    display: block;
+    margin: 0 auto; 
+}
+
+@media (max-width: 432px) {
+    #tannerSizeDiv svg {
+        width: 100%;
+        height: 200px; 
+    }
+}
+
+@media (min-width: 433px) and (max-width: 480px) {
+    #tannerSizeDiv svg {
+        max-width: 100%; 
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    #tannerSizeDiv svg {
+        max-width: 100%; 
+        height: 300px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+    #tannerSizeDiv svg {
+        width: 80%;
+        height: 400px; 
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+    #tannerSizeDiv svg {
+        width: 90%; 
+        height: 500px; 
+    }
+}
+
+@media (min-width: 1440px) {
+    #tannerSizeDiv svg {
+        width: 90%;
+        height: 600px; 
+    }
+}
+
+.taskbar-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    flex: 1;
+    /* Allow tabs to grow and shrink based on container size */
+    width: 100%;
+    /* Ensure full width of the container */
+}
+
+/* Responsive MathJax Equations */
+.MathJax {
+    max-width: 100%;
+    display: inline-block;
+}
+ 
+/* Ensure math containers are responsive */
+.math-container {
+    width: 100%;
+}
+ 
+/* Hide scrollbars on larger screens */
+@media screen and (min-width: 751px) {
+    .math-container {
+        overflow: visible;
+    }
+ 
+    .MathJax {
+        overflow: visible;
+    }
+}
+ 
+/* Add scrollbars for smaller screens */
+@media screen and (max-width: 750px) {
+    .math-container {
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+ 
+    .MathJax {
+        font-size: 1.5em !important;
+    }
+}
+
+@media (min-width: 200px) and (max-width: 450px) {
+    .MathJax {
+        font-size: 1.35em !important;
+    }
+}
+
+ 
+/* Prevent equation overflow */
+.MathJax_Display {
+    max-width: 100%;
+    text-align: center;
+}

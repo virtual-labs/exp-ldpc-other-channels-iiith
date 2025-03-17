@@ -10,39 +10,30 @@ let currentRound = 0;
 const predefinedParityCheckMatrices = [
     {
         H: [
-            [1, 1, 0, 1, 1, 0, 0],
-            [1, 0, 1, 0, 0, 1, 0],
-            [0, 1, 1, 1, 0, 0, 1],
+            [1, 0, 0, 1, 1, 0],
+            [1, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1],
         ],
-        k: 4,
-        n: 7,
+        k: 3,
+        n: 6,
     },
     {
         H: [
-            [1, 0, 1, 1, 1, 0, 0],
-            [0, 1, 1, 0, 0, 1, 0],
-            [1, 1, 0, 0, 0, 0, 1],
+            [1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 1],
+            [0, 1, 1, 1, 0, 1],
         ],
-        k: 4,
-        n: 7,
+        k: 3,
+        n: 6,
     },
     {
         H: [
-            [0, 1, 1, 0, 1, 0, 0],
-            [1, 0, 1, 1, 0, 1, 0],
-            [1, 1, 0, 0, 0, 0, 1],
+            [1, 0, 0, 0, 1, 1],
+            [0, 1, 1, 0, 0, 0],
+            [0, 0, 1, 1, 0, 0],
         ],
-        k: 4,
-        n: 7,
-    },
-    {
-        H: [
-            [1, 0, 0, 1, 1, 0, 0],
-            [0, 1, 0, 1, 0, 1, 0],
-            [1, 1, 1, 0, 0, 0, 1],
-        ],
-        k: 4,
-        n: 7,
+        k: 3,
+        n: 6,
     },
 ];
 
@@ -57,31 +48,69 @@ console.log("G matrix:", G);
 
 
 // Function to compute the generator matrix from a given parity check matrix
-function getGeneratorMatrix(H, k, n) {
+function getGeneratorMatrix(H) {
     const rows = H.length;
     const cols = H[0].length;
+    const rank = gaussianElimination(H);
 
-    // Verify the input matrix is systematic
-    const PTranspose = H.map(row => row.slice(0, k));
-    const identity = H.map(row => row.slice(k));
+    const k = cols - rank;
+    const pivotColumns = new Set();
+    
     for (let i = 0; i < rows; i++) {
-        for (let j = 0; j < rows; j++) {
-            if (identity[i][j] !== (i === j ? 1 : 0)) {
-                throw new Error("Input parity check matrix is not in systematic form.");
+        for (let j = 0; j < cols; j++) {
+            if (H[i][j] === 1) {
+                pivotColumns.add(j);
+                break;
             }
         }
     }
 
-    // Transpose PTranspose to get P
-    const P = Array.from({ length: k }, (_, i) =>
-        Array.from({ length: rows }, (_, j) => PTranspose[j][i])
-    );
+    const freeColumns = [];
+    for (let j = 0; j < cols; j++) {
+        if (!pivotColumns.has(j)) {
+            freeColumns.push(j);
+        }
+    }
 
-    // Construct G = [I_k | P]
-    const identityK = Array.from({ length: k }, (_, i) =>
-        Array.from({ length: k }, (_, j) => (i === j ? 1 : 0))
-    );
-    return identityK.map((row, i) => [...row, ...P[i]]);
+    let G = new Array(k).fill(0).map(() => new Array(cols).fill(0));
+
+    for (let i = 0; i < k; i++) {
+        G[i][freeColumns[i]] = 1;
+        for (let j = 0; j < rank; j++) {
+            let pivotCol = Array.from(pivotColumns)[j];
+            G[i][pivotCol] = H[j][freeColumns[i]];
+        }
+    }
+
+    return G;
+}
+
+function gaussianElimination(H) {
+    let rows = H.length, cols = H[0].length;
+    let rank = 0, row = 0;
+    
+    for (let col = 0; col < cols && row < rows; col++) {
+        let pivotRow = row;
+        while (pivotRow < rows && H[pivotRow][col] === 0) {
+            pivotRow++;
+        }
+        
+        if (pivotRow === rows) continue;
+        
+        [H[row], H[pivotRow]] = [H[pivotRow], H[row]];
+        
+        for (let i = row + 1; i < rows; i++) {
+            if (H[i][col] === 1) {
+                for (let j = 0; j < cols; j++) {
+                    H[i][j] ^= H[row][j];
+                }
+            }
+        }
+        
+        rank++;
+        row++;
+    }
+    return rank;
 }
 
 // Main function to generate LDPC code matrices
@@ -721,3 +750,4 @@ function getNodeDegrees(nodeId) {
 // Call this function to start the iterative peeling process
 // nextRound();
 
+    

@@ -315,7 +315,7 @@ let labels = svg.append("g")
     .attr("x", d => d.type === "x" ? d.x - nodeRadius - bitXShiftLabel : d.x + nodeRadius + checkXShiftLabel)
     .attr("y", d => d.y + yLabelShift)
     .attr("id", d => d.id)
-    .attr("width", 120) // Increased width for longer LLR values
+    .attr("width", 110) // Increased width for longer LLR values
     .attr("height", 30)
     .append("xhtml:div")
     .style("font-size", "15px")

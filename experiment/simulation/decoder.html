@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>
         Message Passing Decoding
@@ -20,7 +21,7 @@
 </head>
 
 <body>
-    
+
     <div class="container" style="margin-top:1%;"></div>
 
     <div class="columns is-centered">
@@ -30,12 +31,14 @@
         <div class="column">
             <div class="v-tabs">
                 <ul class="taskbar-tabs">
-                    <li class="is-active" id="Task1">
+                    
+                    <li id="Task1" onclick="window.location.href = 'index.html';">
                         <a>
                             Single Step of Message Passing
                         </a>
                     </li>
-                    <li id="Task2" onclick="window.location.href = 'decoder.html';">
+                    
+                    <li class="is-active" id="Task2">
                             <a>
                                 Message Passing Decoder
                             </a>
@@ -103,11 +106,12 @@
         <div class="column is-11-desktop is-12-tablet is-12-mobile">
             <div class="v-datalist-container components-list is-centered is-flex-direction-column is-justify-content-center is-align-content-center"
                 id="questionStatement">
-                <p id="awgnTopQuestion"> Consider the Tanner graph below. Identify the messages in this round by a given node.</p>
+
+                <p id="awgnTopQuestion"> The received vector from AWGN channel is shown. Do bit MAP decoding with min sum approximation to find an estimate of the transmitted codeword.</p>
                 <div class="channelBlock">
-                <div style="position: relative; top: 20px;" id="tannerSizeDiv">
-                    <p id="tannerGraph"></p> &nbsp;
-                </div>
+                    <div style="position: relative; top: 20px;" id="tannerSizeDiv">
+                        <p id="tannerGraph"></p> &nbsp;
+                    </div>
                 </div>
             </div>
         </div>
@@ -148,8 +152,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/js/script.js"></script>
-    <script src="./js/ldpc_codes_tanner.js"></script>
+    <script src="./js/ldpc_decoder.js"></script>
 </body>
 
-</body>
-</html> 
+</html>

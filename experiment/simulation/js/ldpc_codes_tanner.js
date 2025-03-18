@@ -38,8 +38,7 @@ const predefinedParityCheckMatrices = [
 ];
 
 // Configuration for AWGN channel
-const noiseVariance = 1.0; // Sigma^2 for the Gaussian noise
-const snrDb = 5.0; // Signal-to-noise ratio in dB
+const snrDb = 2.0; // Signal-to-noise ratio in dB
 const snr = Math.pow(10, snrDb/10); // Convert SNR from dB to linear scale
 const sigma = Math.sqrt(1 / (2 * snr)); // Standard deviation of noise
 const llrThreshold = 0.5; // Threshold for making hard decisions
@@ -141,8 +140,8 @@ const nodeRadius = 10;
 const bitXShiftLabel = 100;
 const checkXShiftLabel = 15;
 const yLabelShift = -10;
-// Add this at the beginning of your code
-let currentDirection = 'left-to-right';
+//direction choosen at random
+let currentDirection = Math.random() < 0.5 ? 'right-to-left' : 'left-to-right';
 
 // Append an SVG element to the #sentCodeword element
 const svg = d3.select("#tannerGraph")

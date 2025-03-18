@@ -4,44 +4,52 @@ const rows = Math.floor(Math.random() * 3) + 3;
 const cols = Math.floor(Math.random() * 3) + rows + 1;
 const rate = Math.random() * 0.5 + 0.25;
 
+// Add tracking variables
 let currentRound = 0;
 
 const predefinedParityCheckMatrices = [
     {
         H: [
-            [1, 0, 0, 1, 1, 0],
+            [1, 0, 1, 1, 0, 1],
+            [0, 1, 0, 0, 0, 1],
+            [0, 0, 1, 0, 1, 0],
+        ],
+        k: 3,
+        n: 6,
+    },
+    {
+        H: [
+            [1, 0, 0, 0, 0, 1],
+            [0, 1, 1, 0, 1, 0],
+            [1, 0, 0, 1, 0, 0],
+        ],
+        k: 3,
+        n: 6,
+    },
+    {
+        H: [
             [1, 1, 1, 0, 0, 0],
-            [0, 0, 0, 0, 1, 1],
-        ],
-        k: 3,
-        n: 6,
-    },
-    {
-        H: [
-            [1, 1, 0, 0, 0, 0],
-            [0, 0, 0, 0, 1, 1],
-            [0, 1, 1, 1, 0, 1],
-        ],
-        k: 3,
-        n: 6,
-    },
-    {
-        H: [
-            [1, 0, 0, 0, 1, 1],
-            [0, 1, 1, 0, 0, 0],
-            [0, 0, 1, 1, 0, 0],
+            [0, 1, 0, 1, 0, 1],
+            [0, 0, 1, 0, 1, 0],
         ],
         k: 3,
         n: 6,
     },
 ];
 
+// Configuration for AWGN channel
+const snrDb = 2.0; // Signal-to-noise ratio in dB
+const snr = Math.pow(10, snrDb/10); // Convert SNR from dB to linear scale
+const sigma = Math.sqrt(1 / (2 * snr)); // Standard deviation of noise
+const llrThreshold = 0.5; // Threshold for making hard decisions
+
 const GH = generateLDPCMatrices();
 const G = GH.generatorMatrix;
 const H = GH.parityCheckMatrix;
 
-console.log("H matrix:", generateLDPCMatrices());
+console.log("H matrix:", H);
 console.log("G matrix:", G);
+
 
 // Function to compute the generator matrix from a given parity check matrix
 function getGeneratorMatrix(H) {
@@ -117,12 +125,11 @@ function generateLDPCMatrices() {
     // Generate the generator matrix from the selected parity check matrix
     const G = getGeneratorMatrix(H, k, n);
 
-    console.log("This works succesfully");
+    console.log("This works successfully");
     // Return the generator and parity check matrices
     return {
         generatorMatrix: G,
         parityCheckMatrix: H,
-
     };
 }
 
@@ -133,8 +140,8 @@ const nodeRadius = 10;
 const bitXShiftLabel = 100;
 const checkXShiftLabel = 15;
 const yLabelShift = -10;
-// Add this at the beginning of your code
-let currentDirection = 'left-to-right';
+//direction choosen at random
+let currentDirection = Math.random() < 0.5 ? 'right-to-left' : 'left-to-right';
 
 // Append an SVG element to the #sentCodeword element
 const svg = d3.select("#tannerGraph")
@@ -152,7 +159,7 @@ const verticalOffset = 50;
 // Modified node generation
 let message = generateRandomMessage(G.length); // Generate random message of length k
 let codeword = encodeMessage(message, G); // Generate valid codeword
-let receivedWord = introduceErrors(codeword); // Introduce some erasures
+let receivedWord = transmitThroughAWGN(codeword); // Transmit through AWGN channel
 
 // Function to generate a random message vector of length k
 function generateRandomMessage(k) {
@@ -174,57 +181,86 @@ function encodeMessage(message, G) {
     return codeword;
 }
 
-// Function to introduce errors into codeword
-
-function introduceErrors(codeword, errorRate = 0.3) {
-    const corrupted = codeword.map(bit => {
-        // Randomly flip some bits to '?' based on error rate
-        return Math.random() < errorRate ? '?' : bit.toString();
+// Function to transmit codeword through AWGN channel
+function transmitThroughAWGN(codeword) {
+    // BPSK modulation: 0 -> +1, 1 -> -1
+    const modulatedSignal = codeword.map(bit => bit === 0 ? 1 : -1);
+    
+    // Add Gaussian noise
+    const receivedSignal = modulatedSignal.map(symbol => {
+        const noise = gaussian(0, sigma);
+        return symbol + noise;
     });
-
-    // Ensure at least one error by flipping a random bit if no errors exist
-    if (!corrupted.includes('?')) {
-        const randomIndex = Math.floor(Math.random() * codeword.length);
-        corrupted[randomIndex] = '?';
-    }
-
-    return corrupted;
+    
+    // Convert received signals to LLRs (Log-Likelihood Ratios)
+    // LLR = log(P(bit=0|y) / P(bit=1|y)) = 2y/sigma^2 for AWGN channel with BPSK
+    const llrs = receivedSignal.map(y => 2 * y / (sigma * sigma));
+    
+    // Create an object with both the received signals and their LLRs
+    return {
+        signal: receivedSignal,
+        llr: llrs,
+        // Add hard decisions for visualization purposes
+        hardDecision: llrs.map(llr => llr > 0 ? 0 : 1)
+    };
 }
 
+// Helper function to generate Gaussian random numbers using Box-Muller transform
+function gaussian(mean, stdDev) {
+    const u1 = Math.random();
+    const u2 = Math.random();
+    
+    const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+    
+    return mean + z0 * stdDev;
+}
+
+// Function to format LLR values for display
+function formatLLR(llr) {
+    return llr.toFixed(2);
+}
+
+// Create bit nodes with LLR values
 let bitNodes = H[0].map((_, j) => ({
     id: "x" + j,
     type: "x",
     x: bitNodeStartX,
     y: j * bitNodeSpacingY + verticalOffset,
     peeled: false,
-    value: receivedWord[j], // Use value from received word
-    label: `x${j}: ${receivedWord[j]}` // Combined ID and value label
+    signal: receivedWord.signal[j],
+    llr: receivedWord.llr[j],
+    hardDecision: receivedWord.hardDecision[j],
+    label: `x${j}: ${formatLLR(receivedWord.llr[j])}` // Show LLR value instead of bit value
 }));
 
+// Create check nodes with initial zero syndrome values
 let checkNodes = H.map((_, i) => ({
     id: "z" + i,
     type: "z",
     x: checkNodeStartX,
     y: i * checkNodeSpacingY + verticalOffset,
     peeled: false,
-    value: '0', // Initially all check nodes have unknown values
-    label: `z${i}: ?` // Combined ID and value label
+    syndrome: 0,
+    label: `z${i}: 0` // Initial syndrome value
 }));
 
 let nodes = [...bitNodes, ...checkNodes];
-
 
 // Create links (edges) between bits and checks based on H matrix
 let links = [];
 H.forEach((row, i) => {
     row.forEach((val, j) => {
         if (val === 1) {
-            links.push({ source: "x" + j, target: "z" + i });
+            links.push({ 
+                source: "x" + j, 
+                target: "z" + i,
+                message: 0, // Initial message value
+                reliability: Math.abs(bitNodes[j].llr) // Message reliability based on LLR magnitude
+            });
         }
     });
 });
 
-// Add the links to the SVG
 let link = svg.append("g")
     .attr("class", "links")
     .selectAll("line")
@@ -233,7 +269,16 @@ let link = svg.append("g")
     .attr("stroke-width", 2)
     .attr("stroke", "#999");
 
-// Add the nodes to the SVG
+// Update the links function to maintain the styling
+function updateLinks() {
+    link
+        .attr("x1", d => bitNodes.find(n => n.id === d.source).x)
+        .attr("y1", d => bitNodes.find(n => n.id === d.source).y)
+        .attr("x2", d => checkNodes.find(n => n.id === d.target).x)
+        .attr("y2", d => checkNodes.find(n => n.id === d.target).y);
+}
+
+// Add the nodes to the SVG with color based on LLR values
 let node = svg.append("g")
     .attr("class", "nodes")
     .selectAll("circle")
@@ -243,7 +288,13 @@ let node = svg.append("g")
     .attr("r", d => d.type === "x" ? nodeRadius : null) // Only circles get radius
     .attr("width", d => d.type === "z" ? nodeRadius * 2 : null) // Width for squares
     .attr("height", d => d.type === "z" ? nodeRadius * 2 : null) // Height for squares
-    .attr("fill", d => d.type === "x" ? "blue" : "green")
+    .attr("fill", d => {
+        if (d.type === "x") {
+            return "blue"
+        } else {
+            return "green"; // Check nodes remain green
+        }
+    })
     .attr("cx", d => d.type === "x" ? d.x : null)
     .attr("cy", d => d.type === "x" ? d.y : null)
     .attr("x", d => d.type === "z" ? d.x - nodeRadius : null) // Center squares
@@ -254,7 +305,7 @@ let node = svg.append("g")
         .on("end", dragended)
     );
 
-
+// Update labels to show LLR values instead of binary values
 let labels = svg.append("g")
     .attr("class", "labels")
     .selectAll("foreignObject")
@@ -264,30 +315,20 @@ let labels = svg.append("g")
     .attr("x", d => d.type === "x" ? d.x - nodeRadius - bitXShiftLabel : d.x + nodeRadius + checkXShiftLabel)
     .attr("y", d => d.y + yLabelShift)
     .attr("id", d => d.id)
-    .attr("width", 100)
+    .attr("width", 120) // Increased width for longer LLR values
     .attr("height", 30)
     .append("xhtml:div")
     .style("font-size", "15px")
     .html(d => {
         if (d.type === "x") {
-            return `\\(x_{${d.id.slice(1)}}: ${d.value}\\)`;
+            return `\\(x_{${d.id.slice(1)}}: ${formatLLR(d.llr)}\\)`;
         }
         if(d.type === "z"){
-            return `\\(z_{${d.id.slice(1)}}: ${d.value}\\)`;
+            return `\\(z_{${d.id.slice(1)}}: ${d.syndrome}\\)`;
         }
         return d.label;
     });
 
-// Trigger MathJax rendering
-// MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-
-// Update the positions of the links
-function updateLinks() {
-    link.attr("x1", d => bitNodes.find(n => n.id === d.source).x)
-        .attr("y1", d => bitNodes.find(n => n.id === d.source).y)
-        .attr("x2", d => checkNodes.find(n => n.id === d.target).x)
-        .attr("y2", d => checkNodes.find(n => n.id === d.target).y);
-}
 
 // Drag behavior functions
 function dragstarted(event, d) {
@@ -308,7 +349,7 @@ function dragged(event, d) {
         .attr("x", d.type === "z" ? d.x - nodeRadius : null)
         .attr("y", d.type === "z" ? d.y - nodeRadius : null);
 
-    // Update labels positions with the combined ID and value
+    // Update labels positions
     labels.filter(l => l.id === d.id)
         .attr("x", d.type === "x" ? d.x - nodeRadius - bitXShiftLabel : d.x + nodeRadius + checkXShiftLabel)
         .attr("y", d.y + yLabelShift)
@@ -316,7 +357,6 @@ function dragged(event, d) {
 
     updateLinks();
 }
-
 
 function dragended(event, d) {
     d3.select(this).attr("stroke", null);
@@ -345,11 +385,6 @@ function adjustSVGSize() {
     svg.attr("viewBox", `${minX - offsetX} ${minY - offsetY} ${newWidth} ${newHeight}`);
 }
 
-
-
-// Other three options that are not the chosen H matrix
-// const incorrectOptions = setOfH.filter(h => !arraysEqual(h, H)).slice(0, 3);
-
 // Helper function to compare two arrays
 function arraysEqual(a, b) {
     if (a.length !== b.length) return false;
@@ -362,152 +397,143 @@ function arraysEqual(a, b) {
     return true;
 }
 
+// Initial call to update links based on static positions
+updateLinks();
+adjustSVGSize();
 
-function runPeelingDecoder(receivedWord, H) {
-    let decodedWord = [...receivedWord];
-    let checkNodeDegrees = Array(H.length).fill(0); // Store degrees of each check node
-    let remainingErasures = true;
-
-    // Initialize checkNodeDegrees to count the number of unknown bits in each check node
-    for (let i = 0; i < H.length; i++) {
-        for (let j = 0; j < decodedWord.length; j++) {
-            if (H[i][j] === 1 && decodedWord[j] === '?') {
-                checkNodeDegrees[i]++;
-            }
-        }
-    }
-
-    while (remainingErasures) {
-        remainingErasures = false;
-
-        for (let i = 0; i < H.length; i++) {
-            if (checkNodeDegrees[i] === 1) {
-                // Find the single unknown bit in this check node
-                let unknownBitIndex = -1;
-                let sum = 0;
-
-                for (let j = 0; j < decodedWord.length; j++) {
-                    if (H[i][j] === 1) {
-                        if (decodedWord[j] === '?') {
-                            unknownBitIndex = j;
-                        } else {
-                            sum = (sum + parseInt(decodedWord[j])) % 2; // Add the known bits
-                        }
-                    }
-                }
-
-                if (unknownBitIndex !== -1) {
-                    // Resolve the unknown bit
-                    decodedWord[unknownBitIndex] = (sum === 0 ? '0' : '1');
-                    remainingErasures = true;
-
-                    // Update the degrees of connected check nodes
-                    for (let k = 0; k < H.length; k++) {
-                        if (H[k][unknownBitIndex] === 1) {
-                            checkNodeDegrees[k]--;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // Check if any erasures remain
-    let fullyDecoded = !decodedWord.includes('?');
-
-    return {
-        decodedWord,
-        fullyDecoded
-    };
+function insertUnderscore(str) {
+    return str[0] + '_' + str.slice(1);
 }
 
-// Generate random incorrect codewords
-function generateIncorrectOption(length) {
-    const codeword = Array(length).fill('0');
-    const numErrors = Math.floor(Math.random() * 3) + 1; // 1-3 errors
-    const hasErasures = Math.random() < 0.5;
+// Function to update bit node LLRs based on incoming messages
+function updateBitNodeLLRs(messages) {
+    // Group messages by destination bit node
+    const messagesByBitNode = {};
     
-    // Introduce random bit flips
-    for (let i = 0; i < numErrors; i++) {
-        const pos = Math.floor(Math.random() * length);
-        if (hasErasures && Math.random() < 0.3) {
-            codeword[pos] = '?';
-        } else {
-            codeword[pos] = (parseInt(codeword[pos]) ^ 1).toString();
+    messages.forEach(msg => {
+        const bitNodeId = msg.to;
+        if (bitNodeId.startsWith('x')) {
+            if (!messagesByBitNode[bitNodeId]) {
+                messagesByBitNode[bitNodeId] = [];
+            }
+            messagesByBitNode[bitNodeId].push(msg.value);
         }
-    }
+    });
     
-    return {
-        codeword,
-        fullyDecoded: !hasErasures
-    };
+    // Update each bit node's LLR
+    Object.keys(messagesByBitNode).forEach(bitNodeId => {
+        const bitNode = bitNodes.find(n => n.id === bitNodeId);
+        const incomingLLRs = messagesByBitNode[bitNodeId];
+        
+        // For AWGN, we sum the incoming LLRs with the channel LLR
+        let newLLR = receivedWord.llr[parseInt(bitNodeId.slice(1))]; // Channel LLR
+        incomingLLRs.forEach(llr => {
+            newLLR += llr;
+        });
+        
+        // Update bit node LLR and hard decision
+        bitNode.llr = newLLR;
+        bitNode.hardDecision = newLLR > 0 ? 0 : 1;
+        
+        // Update label
+        const labelElement = svg.select(`foreignObject#${bitNodeId}`).select("div");
+        if (labelElement.node()) {
+            labelElement.html(`\\(x_{${bitNodeId.slice(1)}}: ${formatLLR(bitNode.llr)}\\)`);
+        }
+        
+        // Update node color based on new LLR
+        const nodeElement = svg.selectAll(`.nodes circle[id='${bitNodeId}']`);
+        const intensity = Math.min(255, 100 + Math.abs(bitNode.llr) * 20);
+        nodeElement.attr("fill", bitNode.llr > 0 ? `rgb(0, 0, ${intensity})` : `rgb(${intensity}, 0, 0)`);
+    });
+    
+    // Update check node syndromes based on new hard decisions
+    updateCheckNodeSyndromes();
+    
+    // Update link styles based on new LLRs
+    updateLinkStyles();
 }
 
-// // Original received word from the code
-// const receivedWord = ['?', '1', '?', '0', '1', '?', '0'];
+// Function to generate message options for the quiz
+function generateMessageOptions() {
+    // Get the form element
+    const form = document.getElementById('form1');
+    form.innerHTML = '';
+    
+    // Generate four options for message passing values
+    const options = [];
+    
+    // Option 1: Correct message (from sum-product algorithm)
+    options.push({
+        id: 'correct',
+        message: codeword
+    });
+    
+    // Option 2: Value with wrong sign
+    options.push({
+        id: 'wrong-sign',
+        message: codeword.map(bit => bit === 0 ? 1 : 0)
+    });
+    
+    // Option 3: Value with one random bit flipped
+    options.push({
+        id: 'wrong-one-bit',
+        message: (() => {
+            const flippedCodeword = [...codeword];
+            const bitToFlip = Math.floor(Math.random() * codeword.length);
+            flippedCodeword[bitToFlip] = flippedCodeword[bitToFlip] === 0 ? 1 : 0;
+            return flippedCodeword;
+        })()
+    });
 
-// // H matrix from the code
-// const H = [
-//     [1, 1, 0, 1, 1, 0, 0],
-//     [1, 0, 1, 0, 0, 1, 0],
-//     [0, 1, 1, 1, 0, 0, 1]
-// ];
+    // Option 4: Value with multiple random bits flipped
+    options.push({
+        id: 'wrong-multiple-bits',
+        message: (() => {
+            const flippedCodeword = [...codeword];
+            const numBitsToFlip = Math.floor(Math.random() * 2) + 2;
+            const positions = new Set();
+            
+            while (positions.size < numBitsToFlip) {
+                positions.add(Math.floor(Math.random() * codeword.length));
+            }
+            
+            positions.forEach(pos => {
+                flippedCodeword[pos] = flippedCodeword[pos] === 0 ? 1 : 0;
+            });
+            
+            return flippedCodeword;
+        })()
+    });
+    
+    // Shuffle and display options
+    const shuffledOptions = shuffleArray(options);
+    shuffledOptions.forEach((option, index) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.style.paddingTop = '0.4em';
+        
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'message-value';
+        radio.id = option.id;
+        radio.value = index;
+        
+        const label = document.createElement('label');
+        label.htmlFor = option.id;
+        label.innerHTML = option.message;
+        
+        div.appendChild(radio);
+        div.appendChild(label);
+        form.appendChild(div);
+    });
+    
+    // Store the correct answer for checking later
+    form.dataset.correctId = 'correct';
+    form.dataset.sourceId = sourceNode.id;
+    form.dataset.destinationId = destinationNode.id;
+}
 
-// Get correct decoded result
-const correctResult = runPeelingDecoder(receivedWord, H);
-
-const form = document.getElementById('form1');
-form.innerHTML = '';
-
-// Generate options
-const options = [
-    {
-        codeword: correctResult.decodedWord.join(''),
-        status: correctResult.fullyDecoded ? "Fully Decoded" : "Partially Decoded",
-        correct: true
-    },
-    ...Array(3).fill(null).map(() => {
-        const generatedOption = generateIncorrectOption(7).codeword.join('');
-        return {
-            codeword: generatedOption,
-            status: generatedOption.includes('?') ? "Partially decoded" : "Fully Decoded",
-            correct: false
-        };
-    })
-];
-
-const formattedOptions = options.map((option, index) => ({
-    id: `option-${index}`,
-    messages: [{
-        message: `\\((${option.codeword})\\), ${option.status}`
-    }],
-    label: 'Decoded codeword:',
-    correct: option.correct
-}));
-
-// Shuffle options
-const shuffledOptions = shuffleArray(formattedOptions);
-
-shuffledOptions.forEach((option, index) => {
-    const div = document.createElement('div');
-    div.className = 'option';
-
-    const radio = document.createElement('input');
-    radio.type = 'radio';
-    radio.name = 'decoded-codeword';
-    radio.id = option.id;
-    radio.value = index;
-    radio.correct = option.correct;
-
-    const label = document.createElement('label');
-    label.htmlFor = option.id;
-    label.innerHTML = `${option.label}<br>` +
-        option.messages.map(msg => msg.message).join(', ');
-
-    div.appendChild(radio);
-    div.appendChild(label);
-    form.appendChild(div);
-});
 
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -517,42 +543,6 @@ function shuffleArray(array) {
     return array;
 }
 
-console.log("Original received word:", receivedWord.join(''));
-console.log("\nDecoding options:");
-shuffledOptions.forEach((option, index) => {
-    console.log(`Decoded codeword: ${option.messages[0].message}`);
-});
-console.log("\nCorrect decode:", shuffledOptions.findIndex(opt => opt.correct));
 
-function NextRound() {
-    const observation = document.getElementById("tannerQuestionObservation");
-    const form = document.getElementById('form1');
-    const selectedOption = Array.from(form.elements).find(el => el.checked);
+generateMessageOptions();
 
-    if (!selectedOption) {
-        observation.innerHTML = "Please select an option before proceeding.";
-        observation.style.color = "red";
-        return;
-    }
-
-    console.log(selectedOption);
-    // Check if the selected option is correct
-    if (selectedOption.correct !== true) {
-        if(correctResult.fullyDecoded === false && selectedOption.status === 1){
-            console.log("HERE");
-            observation.innerHTML = "Is this the only possible codeword that could have been sent?";
-            return;
-        }
-        if (observation.innerHTML == "Incorrect. Please try again. An easy way to verify your answer is that the decoded vector and the received vector should be identical in all the unerased positions.") {
-            observation.innerHTML = "Still incorrect. Please review the theory once again.";
-        } else {
-            observation.innerHTML = "Incorrect. Please try again. An easy way to verify your answer is that the decoded vector and the received vector should be identical in all the unerased positions.";
-        }
-        observation.style.color = "red";
-        return;
-    }
-
-    // Correct option selected - proceed with the round
-    observation.innerHTML = "Correct! We can move on to more complicated channel models now.";
-    observation.style.color = "green";
-}

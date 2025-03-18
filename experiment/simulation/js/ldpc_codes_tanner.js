@@ -352,7 +352,7 @@ function updateCheckNodeSyndromes() {
             
             // If you're using MathJax, retypeset
             if (typeof MathJax !== 'undefined') {
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+                MathJax.typesetPromise();
             }
         }
     });
@@ -713,6 +713,10 @@ function generateMessageOptions() {
     form.dataset.correctId = 'correct';
     form.dataset.sourceId = sourceNode.id;
     form.dataset.destinationId = destinationNode.id;
+
+    if (typeof MathJax !== 'undefined') {
+        MathJax.typesetPromise();
+    }
 }
 
 // Update the NextRound function to work with single message
@@ -797,7 +801,7 @@ function NextRound() {
         updateCheckNodeSyndromes();
         
         // Update link styles
-        updateLinkStyles();
+        // updateLinkStyles();
         
         // Generate a new question for the next round
         generateMessageOptions();

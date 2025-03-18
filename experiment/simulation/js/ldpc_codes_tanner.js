@@ -315,7 +315,7 @@ let labels = svg.append("g")
     .attr("x", d => d.type === "x" ? d.x - nodeRadius - bitXShiftLabel : d.x + nodeRadius + checkXShiftLabel)
     .attr("y", d => d.y + yLabelShift)
     .attr("id", d => d.id)
-    .attr("width", 120) // Increased width for longer LLR values
+    .attr("width", 110) // Increased width for longer LLR values
     .attr("height", 30)
     .append("xhtml:div")
     .style("font-size", "15px")
@@ -352,7 +352,7 @@ function updateCheckNodeSyndromes() {
             
             // If you're using MathJax, retypeset
             if (typeof MathJax !== 'undefined') {
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+                MathJax.typesetPromise();
             }
         }
     });
@@ -713,6 +713,10 @@ function generateMessageOptions() {
     form.dataset.correctId = 'correct';
     form.dataset.sourceId = sourceNode.id;
     form.dataset.destinationId = destinationNode.id;
+
+    if (typeof MathJax !== 'undefined') {
+        MathJax.typesetPromise();
+    }
 }
 
 // Update the NextRound function to work with single message
@@ -797,7 +801,7 @@ function NextRound() {
         updateCheckNodeSyndromes();
         
         // Update link styles
-        updateLinkStyles();
+        // updateLinkStyles();
         
         // Generate a new question for the next round
         generateMessageOptions();

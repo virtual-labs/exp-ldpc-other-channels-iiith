@@ -137,8 +137,8 @@ function generateLDPCMatrices() {
 const width = 600;
 const height = 400;
 const nodeRadius = 10;
-const bitXShiftLabel = 100;
-const checkXShiftLabel = 15;
+const bitXShiftLabel = 102;
+const checkXShiftLabel = -10;
 const yLabelShift = -10;
 //direction choosen at random
 let currentDirection = Math.random() < 0.5 ? 'right-to-left' : 'left-to-right';

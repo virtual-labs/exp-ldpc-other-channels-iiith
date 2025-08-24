@@ -350,10 +350,7 @@ function updateCheckNodeSyndromes() {
                 return `\\(z_{${checkNode.id.slice(1)}}: ${checkNode.syndrome}\\)`;
             });
             
-            // If you're using MathJax, retypeset
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise();
-            }
+
         }
     });
 }
@@ -714,9 +711,6 @@ function generateMessageOptions() {
     form.dataset.sourceId = sourceNode.id;
     form.dataset.destinationId = destinationNode.id;
 
-    if (typeof MathJax !== 'undefined') {
-        MathJax.typesetPromise();
-    }
 }
 
 // Update the NextRound function to work with single message

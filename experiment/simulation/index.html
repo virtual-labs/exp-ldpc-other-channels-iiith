@@ -54,16 +54,11 @@
                     <ul style="list-style: disc;">
                         <b>Quick theory overview:</b>
                         <li>
-                            <strong>The conditional distribution of AWGN Channel is given by:</strong>
+                            <strong> The decoder seeks to find \( \boldsymbol{x} \) which maximizes the probability \(
+                                p(\boldsymbol{y} \mid \boldsymbol{x})\): </strong>
                             <br>
-                            <p style="text-align: center;">\( p(\boldsymbol{y}|\boldsymbol{x})=\frac{1}{(\pi
-                                N_0)^{n/2}}e^{-\frac{(||\boldsymbol{y}-\boldsymbol{x}||^2)}{N_0}}\)</p>
-
-                            <strong> The estimate of the transmitted codeword is given by:</strong>
-                            <p style="text-align: center;">\(\hat{\boldsymbol{x}}=arg_{\boldsymbol{x}\in{\cal
-                                C}}\max\frac{1}{(\pi
-                                N_0)^{n/2}}e^{-\frac{(||\boldsymbol{y}-\boldsymbol{x}||^2)}{N_0}}=arg_{\boldsymbol{x}\in{\cal
-                                C}}\max\langle\boldsymbol{y},\boldsymbol{x}\rangle\)</p>
+                            <p style="text-align: center;">\(\hat{x}=\arg_{\boldsymbol{x}\in{\cal C}}\max
+                                p(\boldsymbol{y} \mid \boldsymbol{x})\)</p>
                         </li>
                     </ul>
                     <br>
@@ -72,25 +67,23 @@
                         <b>Procedure:</b>
 
                         <li>
-                            <strong>Step 1:</strong> Enter the likelihoods of \(\boldsymbol{y}\) given codewords and
-                            click on the
-                            "Check" button to verify the likelihoods.
+                            <strong>Step 1:</strong> Select the option corresponding to the correct message(s) passed in
+                            this round of message passing decoding for the given Tanner graph.
                         </li>
                         <li>
-                            <strong>Step 2:</strong> Select the maximum likelihood estimate codeword from the
-                            dropdown.
+                            <strong>Step 2:</strong> Click on "Submit" to check your answer. After submitting, the
+                            observation box will provide feedback on your answer.
                         </li>
                         <li>
-                            <strong>Step 3:</strong> Click on "Yes" if the maximum likelihood estimate codeword is same
-                            as the transmitted codeword, else click on "No". "Next" button will appear after selecting
-                            the correct option.
+                            <strong>Step 3:</strong> If your answer is incorrect, you can try again by selecting another
+                            option and clicking on "Submit". If your answer is correct, you can reset the question by
+                            clicking on the "Reset" button.
                         <li>
-                            <strong>Step 4:</strong> After clicking on the "Next" button, the next question will appear.
-                            Select all the received vectors that lead to a decoding error when using maximum likelihood
-                            decoding.
+                            <strong>Step 4:</strong> You can proceed to the next subexperiment by clicking on the
+                            "Message Passing Decoder" tab.
                         </li>
 
-
+                        <br>
                     </ul>
                 </div>
             </div>

@@ -543,6 +543,100 @@ function shuffleArray(array) {
     return array;
 }
 
+function NextRound() {
+    const observation = document.getElementById("tannerQuestionObservation");
+    const form = document.getElementById('form1');
+    const selectedOption = Array.from(form.elements).find(el => el.checked);
+    
+    if (!selectedOption) {
+        observation.innerHTML = "Please select an option before proceeding.";
+        observation.style.color = "red";
+        return;
+    }
+    
+    // Check if the selected option is correct
+    if (selectedOption.id === form.dataset.correctId) {
+        observation.innerHTML = "Correct! This is the right message value for this step of the algorithm.";
+        observation.style.color = "green";
+        
+        // Process the entire round of messages
+        if (currentDirection === 'left-to-right') {
+            // Process bit-to-check messages
+            bitNodes.forEach(bitNode => {
+                // Find connected check nodes
+                const connectedLinks = links.filter(link => link.source === bitNode.id);
+                
+                connectedLinks.forEach(link => {
+                    const checkNode = checkNodes.find(n => n.id === link.target);
+                    link.message = bitNode.llr;
+                });
+            });
+            
+            currentDirection = 'right-to-left';
+        } else {
+            // Process check-to-bit messages
+            checkNodes.forEach(checkNode => {
+                // Find connected bit nodes
+                const connectedLinks = links.filter(link => link.target === checkNode.id);
+                
+                connectedLinks.forEach(link => {
+                    const bitNode = bitNodes.find(n => n.id === link.source);
+                    
+                    // Calculate the extrinsic information
+                    let product = 1;
+                    connectedLinks.forEach(otherLink => {
+                        if (otherLink.source !== link.source) {
+                            const otherBitNode = bitNodes.find(n => n.id === otherLink.source);
+                            product *= Math.tanh(otherBitNode.llr / 2);
+                        }
+                    });
+                    
+                    // Convert back to LLR domain
+                    const newLLR = 2 * Math.atanh(product);
+                    link.message = newLLR;
+                });
+            });
+            
+            // Update bit node LLRs
+            bitNodes.forEach(bitNode => {
+                const incomingLinks = links.filter(link => link.target === bitNode.id);
+                
+                let newLLR = receivedWord.llr[parseInt(bitNode.id.slice(1))]; // Channel LLR
+                incomingLinks.forEach(link => {
+                    newLLR += link.message;
+                });
+                
+                // Update bit node LLR and hard decision
+                bitNode.llr = newLLR;
+                bitNode.hardDecision = newLLR > 0 ? 0 : 1;
+                
+                // Update label
+                const labelElement = svg.select(`foreignObject#${bitNode.id}`).select("div");
+                if (labelElement.node()) {
+                    labelElement.html(`\\(x_{${bitNode.id.slice(1)}}: ${formatLLR(bitNode.llr)}\\)`);
+                }
+            });
+            
+            currentDirection = 'left-to-right';
+        }
+        
+        // Update check node syndromes
+        updateCheckNodeSyndromes();
+        
+        // Update link styles
+        // updateLinkStyles();
+        
+        // Generate a new question for the next round
+        generateMessageOptions();
+        
+        // Check if decoding is complete
+        checkDecodingStatus();
+    } else {
+        observation.innerHTML = "Incorrect! Try again by considering how messages are calculated in the sum-product algorithm.";
+        observation.style.color = "red";
+    }
+}
+
 
 generateMessageOptions();
 

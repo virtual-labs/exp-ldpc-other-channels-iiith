@@ -40,7 +40,7 @@
     {
       "target": "exp_name.html",
       "source": "simulation/index.html",
-      "label": "Exp Name",
+      "label": "Simulation",
       "unit-type": "task",
       "content-type": "simulation"
     },

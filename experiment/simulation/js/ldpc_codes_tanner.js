@@ -1,12 +1,4 @@
 // select a random H matrix
-
-const rows = Math.floor(Math.random() * 3) + 3;
-const cols = Math.floor(Math.random() * 3) + rows + 1;
-const rate = Math.random() * 0.5 + 0.25;
-
-// Add tracking variables
-let currentRound = 0;
-
 const predefinedParityCheckMatrices = [
     {
         H: [
@@ -41,7 +33,6 @@ const predefinedParityCheckMatrices = [
 const snrDb = 2.0; // Signal-to-noise ratio in dB
 const snr = Math.pow(10, snrDb / 10); // Convert SNR from dB to linear scale
 const sigma = Math.sqrt(1 / (2 * snr)); // Standard deviation of noise
-const llrThreshold = 0.5; // Threshold for making hard decisions
 
 const GH = generateLDPCMatrices();
 const G = GH.generatorMatrix;
@@ -123,7 +114,7 @@ function generateLDPCMatrices() {
     const { H, k, n } = predefinedParityCheckMatrices[randomIndex];
 
     // Generate the generator matrix from the selected parity check matrix
-    const G = getGeneratorMatrix(H, k, n);
+    const G = getGeneratorMatrix(H);
 
     console.log("This works successfully");
     // Return the generator and parity check matrices
@@ -226,7 +217,6 @@ let bitNodes = H[0].map((_, j) => ({
     type: "x",
     x: bitNodeStartX,
     y: j * bitNodeSpacingY + verticalOffset,
-    peeled: false,
     signal: receivedWord.signal[j],
     llr: receivedWord.llr[j],
     hardDecision: receivedWord.hardDecision[j],
@@ -239,7 +229,6 @@ let checkNodes = H.map((_, i) => ({
     type: "z",
     x: checkNodeStartX,
     y: i * checkNodeSpacingY + verticalOffset,
-    peeled: false,
     syndrome: 0,
     label: `z${i}: 0` // Initial syndrome value
 }));
@@ -254,8 +243,6 @@ H.forEach((row, i) => {
             links.push({
                 source: "x" + j,
                 target: "z" + i,
-                message: 0, // Initial message value
-                reliability: Math.abs(bitNodes[j].llr) // Message reliability based on LLR magnitude
             });
         }
     });
@@ -281,10 +268,11 @@ function updateLinks() {
 // Add the nodes to the SVG with color based on LLR values
 let node = svg.append("g")
     .attr("class", "nodes")
-    .selectAll("circle")
+    .selectAll("g") // SelectAll placeholder
     .data(nodes)
     .enter()
     .append(d => document.createElementNS("http://www.w3.org/2000/svg", d.type === "x" ? "circle" : "rect"))
+    .attr("id", d => d.id) // <-- FIXED: Added ID for selection
     .attr("r", d => d.type === "x" ? nodeRadius : null) // Only circles get radius
     .attr("width", d => d.type === "z" ? nodeRadius * 2 : null) // Width for squares
     .attr("height", d => d.type === "z" ? nodeRadius * 2 : null) // Height for squares
@@ -314,7 +302,7 @@ let labels = svg.append("g")
     .append("foreignObject")
     .attr("x", d => d.type === "x" ? d.x - nodeRadius - bitXShiftLabel : d.x + nodeRadius + checkXShiftLabel)
     .attr("y", d => d.y + yLabelShift)
-    .attr("id", d => d.id)
+    .attr("id", d => d.id) // Note: This ID is on the <foreignObject>
     .attr("width", 110) // Increased width for longer LLR values
     .attr("height", 30)
     .append("xhtml:div")
@@ -349,8 +337,6 @@ function updateCheckNodeSyndromes() {
             labelElement.html(() => {
                 return `\\(z_{${checkNode.id.slice(1)}}: ${checkNode.syndrome}\\)`;
             });
-
-
         }
     });
 }
@@ -413,18 +399,6 @@ function adjustSVGSize() {
     svg.attr("viewBox", `${minX - offsetX} ${minY - offsetY} ${newWidth} ${newHeight}`);
 }
 
-// Helper function to compare two arrays
-function arraysEqual(a, b) {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-        if (a[i].length !== b[i].length) return false;
-        for (let j = 0; j < a[i].length; j++) {
-            if (a[i][j] !== b[i][j]) return false;
-        }
-    }
-    return true;
-}
-
 // Initial call to update links based on static positions
 updateLinks();
 adjustSVGSize();
@@ -443,14 +417,11 @@ function generateAWGNMessages() {
     // Phase 1: Variable nodes to check nodes
     if (currentDirection === 'left-to-right') {
         bitNodes.forEach(bitNode => {
-            if (bitNode.peeled) return;
-
             // Find connected check nodes
             const connectedLinks = links.filter(link => link.source === bitNode.id);
 
             connectedLinks.forEach(link => {
                 const checkNode = checkNodes.find(n => n.id === link.target);
-                if (checkNode.peeled) return;
 
                 // In AWGN, we send the LLR directly in the first round
                 messages.push({
@@ -467,14 +438,11 @@ function generateAWGNMessages() {
     // Phase 2: Check nodes to variable nodes
     else {
         checkNodes.forEach(checkNode => {
-            if (checkNode.peeled) return;
-
             // Find connected bit nodes
             const connectedLinks = links.filter(link => link.target === checkNode.id);
 
             connectedLinks.forEach(link => {
                 const bitNode = bitNodes.find(n => n.id === link.source);
-                if (bitNode.peeled) return;
 
                 // Calculate the extrinsic information (product of tanh of other inputs)
                 let product = 1;
@@ -545,16 +513,14 @@ function updateBitNodeLLRs(messages) {
         }
 
         // Update node color based on new LLR
-        const nodeElement = svg.selectAll(`.nodes circle[id='${bitNodeId}']`);
+        // FIXED: Selector now works because nodes have IDs
+        const nodeElement = svg.select(`.nodes circle[id='${bitNodeId}']`);
         const intensity = Math.min(255, 100 + Math.abs(bitNode.llr) * 20);
         nodeElement.attr("fill", bitNode.llr > 0 ? `rgb(0, 0, ${intensity})` : `rgb(${intensity}, 0, 0)`);
     });
 
     // Update check node syndromes based on new hard decisions
     updateCheckNodeSyndromes();
-
-    // Update link styles based on new LLRs
-    updateLinkStyles();
 }
 
 function generateMessageQuiz() {
@@ -727,36 +693,8 @@ function NextRound() {
 
     // Check if the selected option is correct
     if (selectedOption.id === form.dataset.correctId) {
-        observation.innerHTML = "Correct! Moving to next message...";
+        observation.innerHTML = "Correct! Move on to next exercise ....";
         observation.style.color = "green";
-
-        // Generate new messages based on current direction
-        const messages = generateAWGNMessages();
-        
-        // Update bit node LLRs based on messages
-        if (currentDirection === 'left-to-right') {
-            updateBitNodeLLRs(messages.messages);
-        }
-
-        // Clear previous options and regenerate new ones
-        form.innerHTML = '';
-        generateMessageOptions();
-
-        // Update all node labels
-        updateNodeLabels();
-
-        // Check if decoding is complete
-        checkDecodingStatus();
-
-        // Re-render MathJax expressions for all elements
-        if (window.MathJax) {
-            MathJax.typesetClear();
-            MathJax.typesetPromise().then(() => {
-                // After MathJax finishes, update the graph visualization
-                updateLinks();
-                adjustSVGSize();
-            });
-        }
 
     } else {
         observation.innerHTML = "Incorrect! Try again by considering how messages are calculated in the sum-product algorithm.";
@@ -813,4 +751,3 @@ function shuffleArray(array) {
 // Initialize the graph with first round of message passing options
 const initialMessages = generateAWGNMessages();
 generateMessageOptions(initialMessages);
-

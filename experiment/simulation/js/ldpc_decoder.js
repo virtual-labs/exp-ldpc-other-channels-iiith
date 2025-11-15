@@ -532,7 +532,7 @@ function NextRound() {
         }
 
     } else {
-        observation.innerHTML = "Incorrect! Try again by considering the received signals and channel characteristics.";
+        observation.innerHTML = "Incorrect! Try again by understanding min-sum decoding via message passing algorithm for the given channel LLRs.";
         observation.style.color = "red";
     }
 }

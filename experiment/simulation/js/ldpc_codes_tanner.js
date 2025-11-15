@@ -748,6 +748,10 @@ function shuffleArray(array) {
     return array;
 }
 
+document.getElementById('resetButton').addEventListener('click', function () {
+    location.reload();
+});
+
 // Initialize the graph with first round of message passing options
 const initialMessages = generateAWGNMessages();
 generateMessageOptions(initialMessages);

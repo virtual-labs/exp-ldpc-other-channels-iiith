@@ -1,1 +1,3 @@
 ### Aim of the experiment
+
+The goal of this experiment is to impart a working understanding of the message-passing (belief propagation) algorithm for decoding of linear codes on discrete memoryless channels (DMC). The user is supposed to have a good understanding of linear block, discrete memoryless channels, and the notion of Maximum aposterior probability decoding from previous experiments. The decoding of block codes on erasure channels via the peeling decoder from the previous experiment also provides an important perspective, as it is a special case of the general decoder presented here, for any DMC. 

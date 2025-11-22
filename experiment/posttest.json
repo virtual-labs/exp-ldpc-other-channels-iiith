@@ -2,37 +2,139 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "This is a Sample Question 1?",
+      "question": "What is the primary goal of the Bit-wise MAP decoding algorithm?",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
+        "a": "To find the most likely transmitted codeword from the entire codebook.",
+        "b": "To determine the most probable value for each individual bit of the codeword, given the received vector.",
+        "c": "To calculate the noise variance $\\sigma^2$ of the AWGN channel.",
+        "d": "To verify if the Tanner graph of the code is cycle-free."
       },
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "a": "Incorrect. This describes Maximum Likelihood (ML) decoding for the entire codeword, whereas Bit-wise MAP focuses on individual bits.",
+        "b": "Correct. The algorithm calculates the Log-Likelihood Ratio (LLR) for each bit to make an individual, or 'bit-wise', decision on its most probable value.",
+        "c": "Incorrect. The noise variance is a known parameter used in the algorithm's calculations, not the goal of the algorithm itself.",
+        "d": "Incorrect. The algorithm performs well on cycle-free graphs, but its purpose is decoding, not graph analysis."
       },
-      "correctAnswer": "a",
+      "correctAnswer": "b",
       "difficulty": "beginner"
     },
     {
-      "question": "This is a Sample Question 2?",
+      "question": "If the final Log-Likelihood Ratio $L(x_i)$ for a bit is calculated to be $-3.5$, what is the bit-wise MAP estimate $\\hat{x}_i$?",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
+        "a": "0",
+        "b": "1",
+        "c": "The value cannot be determined.",
+        "d": "An erasure is declared."
       },
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "a": "Incorrect. A positive LLR leads to a decision of 0.",
+        "b": "Correct. According to the decision rule, if $L(x_i) < 0$, the estimate $\\hat{x}_i$ is 1.",
+        "c": "Incorrect. The sign of the LLR is sufficient to make a hard decision.",
+        "d": "Incorrect. Erasures are not part of this specific decision process; a choice is always made unless the LLR is exactly zero."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In the provided example, the received value for the first bit is $y_0 = -0.5$ and the noise variance is $\\sigma^2 = 0.5$. What is the initial channel LLR, $L_{ch}(x_0)$?",
+      "answers": {
+        "a": "-1.0",
+        "b": "-0.5",
+        "c": "-2.0",
+        "d": "+2.0"
+      },
+      "explanations": {
+        "a": "Incorrect. This would be the result if the formula was $2y_i/1.0$.",
+        "b": "Incorrect. This is the value of $y_0$, not the calculated LLR.",
+        "c": "Correct. The formula is $L_{ch}(x_i) = 2y_i / \\sigma^2$. So, $L_{ch}(x_0) = (2 \\times -0.5) / 0.5 = -1.0 / 0.5 = -2.0$.",
+        "d": "Incorrect. The sign of the LLR should match the sign of the received value $y_i$."
       },
       "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "What is the formula for the message sent from a variable node $v_i$ to a check node $c_j$ during iteration $k$?",
+      "answers": {
+        "a": "$L_{i \\to j}^{(k)} = L_{ch}(x_i)$",
+        "b": "$L_{i \\to j}^{(k)} = \\sum_{j' \\in N(v_i) \\setminus \\{j\\}} L_{j' \\to i}^{(k-1)}$",
+        "c": "$L_{i \\to j}^{(k)} = L_{ch}(x_i) + \\sum_{j' \\in N(v_i) \\setminus \\{j\\}} L_{j' \\to i}^{(k-1)}$",
+        "d": "$L_{i \\to j}^{(k)} = L_{ch}(x_i) + \\sum_{j \\in N(v_i)} L_{j \\to i}^{(k)}$"
+      },
+      "explanations": {
+        "a": "Incorrect. This is only true for the very first iteration when all incoming check node messages are zero.",
+        "b": "Incorrect. This formula omits the crucial information from the channel itself.",
+        "c": "Correct. This is the 'sum-up' rule: the message is the sum of the intrinsic channel belief and all other extrinsic beliefs from other connected check nodes.",
+        "d": "Incorrect. The summation must exclude the message from the destination check node $c_j$ to avoid immediately passing back the information it just sent."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "A check node $c_j$ receives three incoming messages with values: $-2.5$, $+3.0$, and $+1.5$. According to the Min-Sum rule, what message does it send to the variable node that originally sent the message $-2.5$?",
+      "answers": {
+        "a": "+1.5",
+        "b": "-1.5",
+        "c": "+3.0",
+        "d": "-2.5"
+      },
+      "explanations": {
+        "a": "Correct. The sign is the product of the other signs: sgn(+3.0) * sgn(+1.5) = +1. The magnitude is the minimum of the other absolute values: min(|+3.0|, |+1.5|) = 1.5.",
+        "b": "Incorrect. The sign is determined by the product of the *other* incoming signs, not all three.",
+        "c": "Incorrect. The magnitude must be the minimum of the incoming magnitudes, not the maximum.",
+        "d": "Incorrect. The message sent back is based on information from the *other* nodes."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "Which of the following is a valid termination condition for the Min-Sum algorithm?",
+      "answers": {
+        "a": "All LLR values become positive.",
+        "b": "The number of iterations exceeds the number of variable nodes.",
+        "c": "The hard decision vector $\\hat{\\bm{x}}^{(k)}$ satisfies all parity checks.",
+        "d": "The messages sent from variable nodes to check nodes become zero."
+      },
+      "explanations": {
+        "a": "Incorrect. A valid codeword can contain 1s, which would have negative LLRs.",
+        "b": "Incorrect. While a maximum number of iterations is set, it is not directly tied to the number of nodes.",
+        "c": "Correct. If the current estimate $\\hat{\\bm{x}}^{(k)}$ is a valid codeword (i.e., $H(\\hat{\\bm{x}}^{(k)})^T = \\bm{0}$), the decoding is successful and the algorithm stops.",
+        "d": "Incorrect. Messages will generally be non-zero throughout the decoding process."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Based on the Check Node update rule, if a check node $c_j$ is connected to only two variable nodes $v_i$ and $v_{i'}$, what is the message $L_{j \\to i}^{(k)}$?",
+      "answers": {
+        "a": "$L_{j \\to i}^{(k)} = L_{i' \\to j}^{(k)}$",
+        "b": "$L_{j \\to i}^{(k)} = -L_{i' \\to j}^{(k)}$",
+        "c": "$L_{j \\to i}^{(k)} = \\min(|L_{i' \\to j}^{(k)}|, 0)$",
+        "d": "$L_{j \\to i}^{(k)} = 0$"
+      },
+      "explanations": {
+        "a": "Correct. The sign is sgn($L_{i' \\to j}^{(k)}$). The magnitude is min($|L_{i' \\to j}^{(k)}|$) which is just $|L_{i' \\to j}^{(k)}|$. Recombining sign and magnitude gives exactly $L_{i' \\to j}^{(k)}$. A degree-2 check node simply passes the message through.",
+        "b": "Incorrect. The sign is not automatically flipped.",
+        "c": "Incorrect. The min operation is not compared against zero in this context.",
+        "d": "Incorrect. The message is only zero if the incoming message is zero."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "What is the initial value of all messages from check nodes to variable nodes, $L_{j \\to i}^{(0)}$, before the first iteration begins?",
+      "answers": {
+        "a": "They are initialized to the channel LLRs.",
+        "b": "They are initialized to 1.",
+        "c": "They are initialized to infinity.",
+        "d": "They are initialized to 0."
+      },
+      "explanations": {
+        "a": "Incorrect. Channel LLRs are the initial information for variable nodes.",
+        "b": "Incorrect. Initializing to 1 would incorrectly bias the calculations.",
+        "c": "Incorrect. In some belief propagation variants, messages can be log-probabilities, but here they are initialized to represent no initial belief.",
+        "d": "Correct. As stated in the material, $L_{j \\to i}^{(0)} = 0$ for all edges. This represents an initial state of no information or belief coming from the parity checks."
+      },
+      "correctAnswer": "d",
       "difficulty": "beginner"
     }
   ]

@@ -1,0 +1,55 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" version="28.0.1">
+  <diagram name="Page-1" id="MhVHQrDnqaKISl6Xz7l-">
+    <mxGraphModel dx="1911" dy="672" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="i53oew14vcihRqfNQ-0c-1" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;b&gt;Channel&lt;/b&gt;&amp;nbsp;&lt;span style=&quot;&quot;&gt;$$p_{\mathbf{y}|\mathbf{x}}$$&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=30;spacing=0;labelBackgroundColor=none;fillStyle=solid;fillColor=light-dark(#FFFFFF,#FFCE9F);fontColor=light-dark(#000000,#000000);" vertex="1" parent="1">
+          <mxGeometry x="420" y="250" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="i53oew14vcihRqfNQ-0c-3" value="&lt;b&gt;Channel Code&lt;/b&gt;&lt;div&gt;&lt;b&gt;Encoder&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=25;" vertex="1" parent="1">
+          <mxGeometry x="120" y="260" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="i53oew14vcihRqfNQ-0c-5" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="920" y="310" as="sourcePoint" />
+            <mxPoint x="990" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i53oew14vcihRqfNQ-0c-6" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="i53oew14vcihRqfNQ-0c-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="690" y="310" as="sourcePoint" />
+            <mxPoint x="770" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i53oew14vcihRqfNQ-0c-7" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-40" y="309.5" as="sourcePoint" />
+            <mxPoint x="120" y="309.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i53oew14vcihRqfNQ-0c-8" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="i53oew14vcihRqfNQ-0c-3" target="i53oew14vcihRqfNQ-0c-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="120" y="450" as="sourcePoint" />
+            <mxPoint x="230" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="i53oew14vcihRqfNQ-0c-9" value="&lt;b&gt;Channel Code&lt;/b&gt;&lt;div&gt;&lt;b&gt;Decoder&lt;/b&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=25;" vertex="1" parent="1">
+          <mxGeometry x="770" y="260" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="i53oew14vcihRqfNQ-0c-10" value="&lt;b&gt;Message&lt;/b&gt;&lt;div&gt;$$m$$&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=25;" vertex="1" parent="1">
+          <mxGeometry x="-80" y="270" width="230" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="i53oew14vcihRqfNQ-0c-11" value="&lt;div&gt;&lt;b&gt;Codeword&lt;/b&gt;&lt;/div&gt;&lt;div&gt;$$\mathbf{x}$$&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=25;" vertex="1" parent="1">
+          <mxGeometry x="230" y="270" width="230" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="i53oew14vcihRqfNQ-0c-12" value="&lt;div&gt;&lt;b&gt;Received vector&lt;/b&gt;&lt;/div&gt;&lt;div&gt;$$\mathbf{y}$$&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=25;" vertex="1" parent="1">
+          <mxGeometry x="660" y="270" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="i53oew14vcihRqfNQ-0c-13" value="&lt;div&gt;&lt;b&gt;Estimate&lt;/b&gt;&lt;/div&gt;&lt;div&gt;$$\hat{\mathbf{x}}$$&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=25;" vertex="1" parent="1">
+          <mxGeometry x="870" y="270" width="230" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

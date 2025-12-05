@@ -36,24 +36,24 @@ The algorithm consists of initialization followed by a series of iterations unti
 1.  **Channel LLRs:** For each received value $y_i$ from the AWGN channel with noise variance $\sigma^2 = N_0/2$ and assuming BPSK modulation ($0 \mapsto +1, 1 \mapsto -1$), the initial channel LLR is calculated as:
     $$L_{ch}(x_i) = \frac{2y_i}{\sigma^2}$$
     This value represents the initial belief about bit $x_i$ from the channel observation alone.
-2.  **Message Initialization:** Messages from check nodes to variable nodes are set to zero before the first iteration. Let $L_{j \to i}^{(k)}$ be the message from check node $c_j$ to variable node $v_i$ in iteration $k$. Then, $L_{j \to i}^{(0)} = 0$ for all edges $(v_i, c_j)$.
+2.  **Message Initialization:** Messages from check nodes to variable nodes are set to zero before the first iteration. Let $L_{j \to i}^{(k)}$ be the message from check node $z_j$ to variable node $x_i$ in iteration $k$. Then, $L_{j \to i}^{(0)} = 0$ for all edges $(x_i, z_j)$.
 
 **Step 2: Iterative Processing (for iteration $k=1, 2, \dots, k_{max}$)**
 
 **A. Variable Node (VN) to Check Node (CN) Update:**
-Each variable node $v_i$ sends a message $L_{i \to j}^{(k)}$ to each adjacent check node $c_j$. This message is the sum of the channel LLR and all incoming messages from other check nodes in the previous iteration.
-$$L_{i \to j}^{(k)} = L_{ch}(x_i) + \sum_{j' \in N(v_i) \setminus \{j\}} L_{j' \to i}^{(k-1)}$$
-where $N(v_i)$ is the set of check nodes connected to $v_i$.
+Each variable node $x_i$ sends a message $L_{i \to j}^{(k)}$ to each adjacent check node $z_j$. This message is the sum of the channel LLR and all incoming messages from other check nodes in the previous iteration.
+$$L_{i \to j}^{(k)} = L_{ch}(x_i) + \sum_{j' \in N(x_i) \setminus \{j\}} L_{j' \to i}^{(k-1)}$$
+where $N(x_i)$ is the set of check nodes connected to $x_i$.
 
 **B. Check Node (CN) to Variable Node (VN) Update:**
-Each check node $c_j$ sends a message $L_{j \to i}^{(k)}$ to each adjacent variable node $v_i$. The Min-Sum approximation provides a simplified rule for this update:
-$$L_{j \to i}^{(k)} = \left(\prod_{i' \in N(c_j) \setminus \{i\}} \operatorname{sgn}\left(L_{i' \to j}^{(k)}\right)\right) \times \min_{i' \in N(c_j) \setminus \{i\}} \left|L_{i' \to j}^{(k)}\right|$$
-where $N(c_j)$ is the set of variable nodes connected to $c_j$. The message's sign is determined by the product of the signs of incoming messages (to satisfy the parity check), and its magnitude is the minimum of the incoming magnitudes.
+Each check node $z_j$ sends a message $L_{j \to i}^{(k)}$ to each adjacent variable node $x_i$. The Min-Sum approximation provides a simplified rule for this update:
+$$L_{j \to i}^{(k)} = \left(\prod_{i' \in N(z_j) \setminus \{i\}} \operatorname{sgn}\left(L_{i' \to j}^{(k)}\right)\right) \times \min_{i' \in N(z_j) \setminus \{i\}} \left|L_{i' \to j}^{(k)}\right|$$
+where $N(z_j)$ is the set of variable nodes connected to $z_j$. The message's sign is determined by the product of the signs of incoming messages (to satisfy the parity check), and its magnitude is the minimum of the incoming magnitudes.
 
 **Step 3: LLR Aggregation and Decision**
 After the check node update, each variable node aggregates all its information to compute a total LLR and make a hard decision.
 
-1.  **Total LLR:** $L_{total}^{(k)}(x_i) = L_{ch}(x_i) + \sum_{j \in N(v_i)} L_{j \to i}^{(k)}$.
+1.  **Total LLR:** $L_{total}^{(k)}(x_i) = L_{ch}(x_i) + \sum_{j \in N(x_i)} L_{j \to i}^{(k)}$.
 2.  **Hard Decision:** A temporary decoded vector $\hat{\bm{x}}^{(k)}$ is formed using the rule: $\hat{x}_i = 0$ if $L_{total}^{(k)}(x_i) \ge 0$, and $\hat{x}_i = 1$ otherwise.
 
 **Step 4: Termination**
@@ -80,7 +80,7 @@ Let's illustrate the algorithm with a concrete example.
 
   The Tanner graph for this code is cycle-free (a tree).
   <p align="center">
-    <img src="dummyimage.jpg" width="500"/>
+    <img src="images/tannergraphexample_virtuallabs.jpg" width="350"/>
   </p>
 
 - **Transmission:**
@@ -118,15 +118,15 @@ Since all $L_{j \to i}^{(0)} = 0$, the first VN-to-CN messages are simply the ch
 **B. Check Node → Variable Node Update**
 The check nodes compute their outgoing messages using the Min-Sum rule.
 
-- **From $c_0$ (to $v_0, v_1, v_2$):**
+- **From $z_0$ (to $x_0, x_1, x_2$):**
   - $L_{0 \to 0}^{(1)} = \operatorname{sgn}(-0.8)\operatorname{sgn}(+4.4) \times \min(|-0.8|, |+4.4|) = -0.8$
   - $L_{0 \to 1}^{(1)} = \operatorname{sgn}(-2.0)\operatorname{sgn}(+4.4) \times \min(|-2.0|, |+4.4|) = -2.0$
   - $L_{0 \to 2}^{(1)} = \operatorname{sgn}(-2.0)\operatorname{sgn}(-0.8) \times \min(|-2.0|, |-0.8|) = +0.8$
-- **From $c_1$ (to $v_0, v_3, v_4$):**
+- **From $z_1$ (to $x_0, x_3, x_4$):**
   - $L_{1 \to 0}^{(1)} = \operatorname{sgn}(+3.2)\operatorname{sgn}(+6.0) \times \min(|+3.2|, |+6.0|) = +3.2$
   - $L_{1 \to 3}^{(1)} = \operatorname{sgn}(-2.0)\operatorname{sgn}(+6.0) \times \min(|-2.0|, |+6.0|) = -2.0$
   - $L_{1 \to 4}^{(1)} = \operatorname{sgn}(-2.0)\operatorname{sgn}(+3.2) \times \min(|-2.0|, |+3.2|) = -2.0$
-- **From $c_2$ (to $v_2, v_5$):**
+- **From $z_2$ (to $x_2, x_5$):**
   - $L_{2 \to 2}^{(1)} = \operatorname{sgn}(+1.6) \times |+1.6| = +1.6$
   - $L_{2 \to 5}^{(1)} = \operatorname{sgn}(+4.4) \times |+4.4| = +4.4$
 
@@ -162,15 +162,15 @@ We use the messages $L_{j \to i}^{(1)}$ from the previous step.
 
 **B. Check Node → Variable Node Update**
 
-- **From $c_0$:**
+- **From $z_0$:**
   - $L_{0 \to 0}^{(2)} = \operatorname{sgn}(-0.8)\operatorname{sgn}(+6.0) \times \min(|-0.8|, |+6.0|) = -0.8$
   - $L_{0 \to 1}^{(2)} = \operatorname{sgn}(+1.2)\operatorname{sgn}(+6.0) \times \min(|+1.2|, |+6.0|) = +1.2$
   - $L_{0 \to 2}^{(2)} = \operatorname{sgn}(+1.2)\operatorname{sgn}(-0.8) \times \min(|+1.2|, |-0.8|) = -0.8$
-- **From $c_1$:**
+- **From $z_1$:**
   - $L_{1 \to 0}^{(2)} = \operatorname{sgn}(+3.2)\operatorname{sgn}(+6.0) \times \min(|+3.2|, |+6.0|) = +3.2$
   - $L_{1 \to 3}^{(2)} = \operatorname{sgn}(-2.8)\operatorname{sgn}(+6.0) \times \min(|-2.8|, |+6.0|) = -2.8$
   - $L_{1 \to 4}^{(2)} = \operatorname{sgn}(-2.8)\operatorname{sgn}(+3.2) \times \min(|-2.8|, |+3.2|) = -2.8$
-- **From $c_2$:**
+- **From $z_2$:**
   - $L_{2 \to 2}^{(2)} = +1.6$
   - $L_{2 \to 5}^{(2)} = +5.2$
 

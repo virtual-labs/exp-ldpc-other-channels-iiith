@@ -4,19 +4,19 @@ We now describe the general message passing algorithm for achieving Bit-wise Max
 
 Let $\bm{x}=(x_1,\ldots,x_n)\in {\cal C}$ be the codeword transmitted from the linear code $\cal C$ of dimension $k$. Let $\bm{y}=(y_1,\ldots,y_n)$ be the received vector from the channel. The bit-wise MAP estimate of the bit $x_i$ is based on the value of the log-likelihood ratio (LLR) of $x_i$ given $\bm{y}$, denoted by $L(x_i|\bm{y})$, and defined as follows.
 
-$$L(x_i)\triangleq \log\left(\frac{p(x_i=0|\bm{y})}{p(x_i=1|\bm{y})}\right).$$
+$$L(x_i)\triangleq \log\left(\frac{p(x_i=0|\bm{y})}{p(x_i=1|\bm{y})}\right). \tag{1}$$
 
 In the case of AWGN channels, we assume without loss of generality that $x_i\in\{+1,-1\}$, under a bipolar signalling scheme. Thus, the LLR $L(x_i)$ is then defined as
-$$L(x_i)\triangleq \log\left(\frac{p(x_i=+1|\bm{y})}{p(x_i=-1|\bm{y})}\right).$$
+$$L(x_i)\triangleq \log\left(\frac{p(x_i=+1|\bm{y})}{p(x_i=-1|\bm{y})}\right). \tag{2}$$
 
 The bitwise MAP estimate for $x_i$ is then denoted by $\hat{x}_i$ and calculated as follows.
 
 $$
-\begin{align}
+\begin{align*}
 \hat{x}_i=\begin{cases}0,& \text{if}~L(x_i)>0\\
 1, & \text{if}~L(x_i)<0.
 \end{cases}
-\end{align}
+\end{align*} \tag{3}
 $$
 
 Note that we assume ties are broken arbitrarily, i.e., the decoder choose the estimate $\hat{x}_i$ randomly if $L(x_i|\bm{y})=0$.
@@ -34,7 +34,7 @@ The algorithm consists of initialization followed by a series of iterations unti
 **Step 1: Initialization**
 
 1.  **Channel LLRs:** For each received value $y_i$ from the AWGN channel with noise variance $\sigma^2 = N_0/2$ and assuming BPSK modulation ($0 \mapsto +1, 1 \mapsto -1$), the initial channel LLR is calculated as:
-    $$L_{ch}(x_i) = \frac{2y_i}{\sigma^2}$$
+    $$L_{ch}(x_i) = \frac{2y_i}{\sigma^2} \tag{4}$$
     This value represents the initial belief about bit $x_i$ from the channel observation alone.
 2.  **Message Initialization:** Messages from check nodes to variable nodes are set to zero before the first iteration. Let $L_{j \to i}^{(k)}$ be the message from check node $z_j$ to variable node $x_i$ in iteration $k$. Then, $L_{j \to i}^{(0)} = 0$ for all edges $(x_i, z_j)$.
 
@@ -42,12 +42,12 @@ The algorithm consists of initialization followed by a series of iterations unti
 
 **A. Variable Node (VN) to Check Node (CN) Update:**
 Each variable node $x_i$ sends a message $L_{i \to j}^{(k)}$ to each adjacent check node $z_j$. This message is the sum of the channel LLR and all incoming messages from other check nodes in the previous iteration.
-$$L_{i \to j}^{(k)} = L_{ch}(x_i) + \sum_{j' \in N(x_i) \setminus \{j\}} L_{j' \to i}^{(k-1)}$$
+$$L_{i \to j}^{(k)} = L_{ch}(x_i) + \sum_{j' \in N(x_i) \setminus \{j\}} L_{j' \to i}^{(k-1)} \tag{5}$$
 where $N(x_i)$ is the set of check nodes connected to $x_i$.
 
 **B. Check Node (CN) to Variable Node (VN) Update:**
 Each check node $z_j$ sends a message $L_{j \to i}^{(k)}$ to each adjacent variable node $x_i$. The Min-Sum approximation provides a simplified rule for this update:
-$$L_{j \to i}^{(k)} = \left(\prod_{i' \in N(z_j) \setminus \{i\}} \operatorname{sgn}\left(L_{i' \to j}^{(k)}\right)\right) \times \min_{i' \in N(z_j) \setminus \{i\}} \left|L_{i' \to j}^{(k)}\right|$$
+$$L_{j \to i}^{(k)} = \left(\prod_{i' \in N(z_j) \setminus \{i\}} \operatorname{sgn}\left(L_{i' \to j}^{(k)}\right)\right) \times \min_{i' \in N(z_j) \setminus \{i\}} \left|L_{i' \to j}^{(k)}\right| \tag{6}$$
 where $N(z_j)$ is the set of variable nodes connected to $z_j$. The message's sign is determined by the product of the signs of incoming messages (to satisfy the parity check), and its magnitude is the minimum of the incoming magnitudes.
 
 **Step 3: LLR Aggregation and Decision**
@@ -78,10 +78,15 @@ Let's illustrate the algorithm with a concrete example.
   \end{pmatrix}
   $$
 
-  The Tanner graph for this code is cycle-free (a tree).
+  <!-- The Tanner graph for this code is cycle-free (a tree).
   <p align="center">
     <img src="images/tannergraphexample_virtuallabs.jpg" width="350"/>
-  </p>
+  </p> -->
+
+<figure style="text-align:center;">
+  <img src="images/tannergraphexample_virtuallabs.jpg" width="350"/>
+  <figcaption>Fig 1. Tanner Graph for this code is cycle-free (a tree)</figcaption>
+</figure>
 
 - **Transmission:**
   - Transmitted codeword: $\bm{x} = (0, 0, 0, 0, 0, 0)$.

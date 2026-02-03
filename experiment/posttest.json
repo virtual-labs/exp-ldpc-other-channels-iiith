@@ -2,7 +2,7 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "What is the primary goal of the Bit-wise MAP decoding algorithm?",
+      "question": "1. What is the primary goal of the Bit-wise MAP decoding algorithm?",
       "answers": {
         "a": "To find the most likely transmitted codeword from the entire codebook.",
         "b": "To determine the most probable value for each individual bit of the codeword, given the received vector.",
@@ -19,7 +19,7 @@
       "difficulty": "beginner"
     },
     {
-      "question": "If the final Log-Likelihood Ratio $L(x_i)$ for a bit is calculated to be $-3.5$, what is the bit-wise MAP estimate $\\hat{x}_i$?",
+      "question": "2. If the final Log-Likelihood Ratio $L(x_i)$ for a bit is calculated to be $-3.5$, what is the bit-wise MAP estimate $\\hat{x}_i$?",
       "answers": {
         "a": "0",
         "b": "1",
@@ -36,7 +36,7 @@
       "difficulty": "beginner"
     },
     {
-      "question": "In the provided example, the received value for the first bit is $y_0 = -0.5$ and the noise variance is $\\sigma^2 = 0.5$. What is the initial channel LLR, $L_{ch}(x_0)$?",
+      "question": "3. In the provided example, the received value for the first bit is $y_0 = -0.5$ and the noise variance is $\\sigma^2 = 0.5$. What is the initial channel LLR, $L_{ch}(x_0)$?",
       "answers": {
         "a": "-1.0",
         "b": "-0.5",
@@ -53,7 +53,7 @@
       "difficulty": "intermediate"
     },
     {
-      "question": "What is the formula for the message sent from a variable node $v_i$ to a check node $c_j$ during iteration $k$?",
+      "question": "4. What is the formula for the message sent from a variable node $v_i$ to a check node $c_j$ during iteration $k$?",
       "answers": {
         "a": "$L_{i \\to j}^{(k)} = L_{ch}(x_i)$",
         "b": "$L_{i \\to j}^{(k)} = \\sum_{j' \\in N(v_i) \\setminus \\{j\\}} L_{j' \\to i}^{(k-1)}$",
@@ -70,7 +70,7 @@
       "difficulty": "intermediate"
     },
     {
-      "question": "A check node $c_j$ receives three incoming messages with values: $-2.5$, $+3.0$, and $+1.5$. According to the Min-Sum rule, what message does it send to the variable node that originally sent the message $-2.5$?",
+      "question": "5. A check node $c_j$ receives three incoming messages with values: $-2.5$, $+3.0$, and $+1.5$. According to the Min-Sum rule, what message does it send to the variable node that originally sent the message $-2.5$?",
       "answers": {
         "a": "+1.5",
         "b": "-1.5",
@@ -87,7 +87,7 @@
       "difficulty": "advanced"
     },
     {
-      "question": "Which of the following is a valid termination condition for the Min-Sum algorithm?",
+      "question": "6. Which of the following is a valid termination condition for the Min-Sum algorithm?",
       "answers": {
         "a": "All LLR values become positive.",
         "b": "The number of iterations exceeds the number of variable nodes.",
@@ -104,7 +104,7 @@
       "difficulty": "beginner"
     },
     {
-      "question": "Based on the Check Node update rule, if a check node $c_j$ is connected to only two variable nodes $v_i$ and $v_{i'}$, what is the message $L_{j \\to i}^{(k)}$?",
+      "question": "7. Based on the Check Node update rule, if a check node $c_j$ is connected to only two variable nodes $v_i$ and $v_{i'}$, what is the message $L_{j \\to i}^{(k)}$?",
       "answers": {
         "a": "$L_{j \\to i}^{(k)} = L_{i' \\to j}^{(k)}$",
         "b": "$L_{j \\to i}^{(k)} = -L_{i' \\to j}^{(k)}$",
@@ -121,7 +121,7 @@
       "difficulty": "advanced"
     },
     {
-      "question": "What is the initial value of all messages from check nodes to variable nodes, $L_{j \\to i}^{(0)}$, before the first iteration begins?",
+      "question": "8. What is the initial value of all messages from check nodes to variable nodes, $L_{j \\to i}^{(0)}$, before the first iteration begins?",
       "answers": {
         "a": "They are initialized to the channel LLRs.",
         "b": "They are initialized to 1.",

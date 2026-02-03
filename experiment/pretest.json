@@ -2,7 +2,7 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "Given a generator matrix $G$ for a linear block code, the corresponding parity check matrix $H$ must satisfy which of the following conditions for all codewords?",
+      "question": "1. Given a generator matrix $G$ for a linear block code, the corresponding parity check matrix $H$ must satisfy which of the following conditions for all codewords?",
       "answers": {
         "a": "$GH^T = I$, where $I$ is the identity matrix",
         "b": "$G = H^T$",
@@ -19,7 +19,7 @@
       "difficulty": "beginner"
     },
     {
-      "question": "If the syndrome $s = rH^T$ for a received vector $r$ is non-zero, what does this imply?",
+      "question": "2. If the syndrome $s = rH^T$ for a received vector $r$ is non-zero, what does this imply?",
       "answers": {
         "a": "$r$ is a valid codeword.",
         "b": "$r$ is not a valid codeword, indicating an error has occurred.",
@@ -36,7 +36,7 @@
       "difficulty": "beginner"
     },
     {
-      "question": "For a Binary Symmetric Channel (BSC) with crossover probability $p=0.1$, if the codeword $c = (1, 0, 1, 0)$ is sent, what is the probability that the received vector is $r = (1, 1, 1, 0)$?",
+      "question": "3. For a Binary Symmetric Channel (BSC) with crossover probability $p=0.1$, if the codeword $c = (1, 0, 1, 0)$ is sent, what is the probability that the received vector is $r = (1, 1, 1, 0)$?",
       "answers": {
         "a": "$0.001$",
         "b": "$0.081$",
@@ -53,7 +53,7 @@
       "difficulty": "intermediate"
     },
     {
-      "question": "What is the key difference in the output of a Binary Erasure Channel (BEC) compared to a Binary Symmetric Channel (BSC)?",
+      "question": "4. What is the key difference in the output of a Binary Erasure Channel (BEC) compared to a Binary Symmetric Channel (BSC)?",
       "answers": {
         "a": "A BEC can flip bits from 0 to 1, but not 1 to 0.",
         "b": "A BEC introduces a third output symbol, 'erasure', and does not flip bits.",
@@ -70,7 +70,7 @@
       "difficulty": "beginner"
     },
     {
-      "question": "In a Tanner graph representation of an LDPC code, what do the two distinct sets of nodes represent?",
+      "question": "5. In a Tanner graph representation of an LDPC code, what do the two distinct sets of nodes represent?",
       "answers": {
         "a": "Message bits and parity bits",
         "b": "Variable nodes (codeword bits) and check nodes (parity-check equations)",
@@ -87,7 +87,7 @@
       "difficulty": "intermediate"
     },
     {
-      "question": "What is the primary characteristic of the noise in an Additive White Gaussian Noise (AWGN) channel?",
+      "question": "6. What is the primary characteristic of the noise in an Additive White Gaussian Noise (AWGN) channel?",
       "answers": {
         "a": "The noise is uniformly distributed and correlated.",
         "b": "The noise values are statistically independent and follow a Gaussian (normal) distribution.",
@@ -104,7 +104,7 @@
       "difficulty": "beginner"
     },
     {
-      "question": "What is the first step in the peeling decoding algorithm for an LDPC code over a BEC?",
+      "question": "7. What is the first step in the peeling decoding algorithm for an LDPC code over a BEC?",
       "answers": {
         "a": "Find a variable node connected to only one check node.",
         "b": "Identify a received bit that has been flipped.",
@@ -121,7 +121,7 @@
       "difficulty": "intermediate"
     },
     {
-      "question": "A code has the parity check equation $c_1 + c_3 + c_4 = 0$. The received vector over a BEC is $r = (1, 0, e, 0)$, where 'e' is an erasure. What is the decoded value of the erased bit $c_3$?",
+      "question": "8. A code has the parity check equation $c_1 + c_3 + c_4 = 0$. The received vector over a BEC is $r = (1, 0, e, 0)$, where 'e' is an erasure. What is the decoded value of the erased bit $c_3$?",
       "answers": {
         "a": "0",
         "b": "1",
@@ -138,7 +138,7 @@
       "difficulty": "intermediate"
     },
     {
-      "question": "After the peeling decoder successfully resolves an erasure using a degree-1 check node, what is the immediate next step?",
+      "question": "9. After the peeling decoder successfully resolves an erasure using a degree-1 check node, what is the immediate next step?",
       "answers": {
         "a": "The algorithm terminates, as one bit has been corrected.",
         "b": "The decoder requests a retransmission of the entire codeword.",
@@ -155,7 +155,7 @@
       "difficulty": "intermediate"
     },
     {
-      "question": "Under which condition will the peeling decoder for a BEC get stuck and fail to decode all erasures?",
+      "question": "10. Under which condition will the peeling decoder for a BEC get stuck and fail to decode all erasures?",
       "answers": {
         "a": "The received vector contains an odd number of erasures.",
         "b": "The channel's erasure probability $\\epsilon$ is greater than 0.5.",

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>
         Message Passing Decoding
@@ -20,7 +21,7 @@
 </head>
 
 <body>
-    
+
     <div class="container" style="margin-top:1%;"></div>
 
     <div class="columns is-centered">
@@ -30,12 +31,14 @@
         <div class="column">
             <div class="v-tabs">
                 <ul class="taskbar-tabs">
-                    <li class="is-active" id="Task1">
+                    
+                    <li id="Task1" onclick="window.location.href = 'index.html';">
                         <a>
                             Single Step of Message Passing
                         </a>
                     </li>
-                    <li id="Task2" onclick="window.location.href = 'decoder.html';">
+                    
+                    <li class="is-active" id="Task2">
                             <a>
                                 Message Passing Decoder
                             </a>
@@ -67,8 +70,8 @@
                         <b>Procedure:</b>
 
                         <li>
-                            <strong>Step 1:</strong> Select the option corresponding to the correct message(s) passed in
-                            this round of message passing decoding for the given Tanner graph.
+                            <strong>Step 1:</strong> Select the option corresponding to the final estimate obtained
+                            after message passing decoding for the given Tanner graph.
                         </li>
                         <li>
                             <strong>Step 2:</strong> Click on "Submit" to check your answer. After submitting, the
@@ -78,8 +81,8 @@
                             <strong>Step 3:</strong> If your answer is incorrect, you can try again by selecting another
                             option and clicking on "Submit". You can try another question by clicking on the "New Question" button.
                         <li>
-                            <strong>Step 4:</strong> You can proceed to the next subexperiment by clicking on the
-                            "Message Passing Decoder" tab.
+                            <strong>Step 4:</strong> You can go back to the previous subexperiment by clicking on the
+                            "Single Step of Message Passing" tab.
                         </li>
 
                         <br>
@@ -95,11 +98,12 @@
         <div class="column is-11-desktop is-12-tablet is-12-mobile">
             <div class="v-datalist-container components-list is-centered is-flex-direction-column is-justify-content-center is-align-content-center"
                 id="questionStatement">
-                <p id="awgnTopQuestion"> Consider the Tanner graph below. The channel LLRs are shown next to the variable nodes. Identify the messages in this round by a given node.</p>
+
+                <p id="awgnTopQuestion"> The channel LLRs from AWGN channel are shown. Do bit MAP decoding with min sum approximation to find an estimate of the transmitted codeword.</p>
                 <div class="channelBlock">
-                <div style="position: relative; top: 20px;" id="tannerSizeDiv">
-                    <p id="tannerGraph"></p> &nbsp;
-                </div>
+                    <div style="position: relative; top: 20px;" id="tannerSizeDiv">
+                        <p id="tannerGraph"></p> &nbsp;
+                    </div>
                 </div>
             </div>
         </div>
@@ -140,8 +144,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/js/script.js"></script>
-    <script src="./js/ldpc_codes_tanner.js"></script>
+    <script src="./js/ldpc_decoder.js"></script>
 </body>
 
-</body>
-</html> 
+</html>

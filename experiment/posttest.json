@@ -44,7 +44,7 @@
         "d": "+2.0"
       },
       "explanations": {
-        "a": "Incorrect. This would be the result if the formula was $2y_i/1.0$.",
+        "a": "Incorrect. This would be the result if the formula was $2y_i/\\sigma^2$.",
         "b": "Incorrect. This is the value of $y_0$, not the calculated LLR.",
         "c": "Correct. The formula is $L_{ch}(x_i) = 2y_i / \\sigma^2$. So, $L_{ch}(x_0) = (2 \\times -0.5) / 0.5 = -1.0 / 0.5 = -2.0$.",
         "d": "Incorrect. The sign of the LLR should match the sign of the received value $y_i$."

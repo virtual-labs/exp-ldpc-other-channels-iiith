@@ -104,24 +104,7 @@
       "difficulty": "beginner"
     },
     {
-      "question": "7. What is the first step in the peeling decoding algorithm for an LDPC code over a BEC?",
-      "answers": {
-        "a": "Find a variable node connected to only one check node.",
-        "b": "Identify a received bit that has been flipped.",
-        "c": "Find a check node that is connected to only one erased variable node.",
-        "d": "Guess the value of the first erased bit and check the syndrome."
-      },
-      "explanations": {
-        "a": "Incorrect. While degree-1 variable nodes are useful, the algorithm's iterative step focuses on check nodes to resolve erasures.",
-        "b": "Incorrect. In a BEC, bits are erased, not flipped. The decoder knows the location of the erasures.",
-        "c": "Correct. The algorithm starts by looking for a check node connected to only one erased bit. Since the parity check equation must sum to zero, the value of this single erased bit can be determined exactly from the values of the other (known) bits connected to that same check node.",
-        "d": "Incorrect. The peeling decoder is a deterministic algorithm; it does not involve guessing."
-      },
-      "correctAnswer": "c",
-      "difficulty": "intermediate"
-    },
-    {
-      "question": "8. A code has the parity check equation $c_1 + c_3 + c_4 = 0$. The received vector over a BEC is $r = (1, 0, e, 0)$, where 'e' is an erasure. What is the decoded value of the erased bit $c_3$?",
+      "question": "7. A code has the parity check equation $c_1 + c_3 + c_4 = 0$. The received vector over a BEC is $r = (1, 0, e, 0)$, where 'e' is an erasure. What is the decoded value of the erased bit $c_3$?",
       "answers": {
         "a": "0",
         "b": "1",
@@ -138,7 +121,7 @@
       "difficulty": "intermediate"
     },
     {
-      "question": "9. After the peeling decoder successfully resolves an erasure using a degree-1 check node, what is the immediate next step?",
+      "question": "8. After the peeling decoder successfully resolves an erasure using a degree-1 check node, what is the immediate next step?",
       "answers": {
         "a": "The algorithm terminates, as one bit has been corrected.",
         "b": "The decoder requests a retransmission of the entire codeword.",
@@ -155,7 +138,7 @@
       "difficulty": "intermediate"
     },
     {
-      "question": "10. Under which condition will the peeling decoder for a BEC get stuck and fail to decode all erasures?",
+      "question": "9. Under which condition will the peeling decoder for a BEC get stuck and fail to decode all erasures?",
       "answers": {
         "a": "The received vector contains an odd number of erasures.",
         "b": "The channel's erasure probability $\\epsilon$ is greater than 0.5.",
